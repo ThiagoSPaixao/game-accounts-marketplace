@@ -492,4 +492,5 @@ notificationStyles.textContent = `
 
 document.head.appendChild(notificationStyles);
 
-export default cart;
+// Tornar acessível globalmente
+window.cart = cart;
