@@ -1,7 +1,4 @@
 // Lógica principal do aplicativo
-import db from './database.js';
-import cart from './cart.js';
-
 class GameAccountsApp {
     constructor() {
         this.currentUser = null;
@@ -17,6 +14,9 @@ class GameAccountsApp {
         
         // Carrega dados iniciais
         await this.loadInitialData();
+        
+        // Configura listeners globais
+        this.setupGlobalListeners();
     }
 
     loadCurrentUser() {
@@ -68,6 +68,23 @@ class GameAccountsApp {
         this.initForms();
     }
 
+    setupGlobalListeners() {
+        // Adicionar listener para atualizar quando nova conta for publicada
+        document.addEventListener('newAccountPublished', () => {
+            if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
+                this.loadFeaturedAccounts();
+            }
+        });
+
+        // Verificar se precisa atualizar a home
+        if (localStorage.getItem('home_needs_refresh') === 'true') {
+            localStorage.removeItem('home_needs_refresh');
+            if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
+                this.loadFeaturedAccounts();
+            }
+        }
+    }
+
     initMobileMenu() {
         const menuBtn = document.querySelector('.mobile-menu-btn');
         const closeBtn = document.querySelector('.mobile-nav-close');
@@ -113,7 +130,7 @@ class GameAccountsApp {
         if (!query.trim()) return;
 
         try {
-            const accounts = await db.getAllAccounts({
+            const accounts = await window.db.getAllAccounts({
                 search: query,
                 status: 'available'
             });
@@ -190,7 +207,7 @@ class GameAccountsApp {
         }
 
         try {
-            let accounts = await db.getAllAccounts(filters);
+            let accounts = await window.db.getAllAccounts(filters);
             
             // Aplica ordenação
             if (filters.sort) {
@@ -352,7 +369,7 @@ class GameAccountsApp {
         const password = formData.get('password');
 
         try {
-            const user = await db.loginUser(email, password);
+            const user = await window.db.loginUser(email, password);
             
             if (user) {
                 this.currentUser = user;
@@ -395,7 +412,7 @@ class GameAccountsApp {
         };
 
         try {
-            const user = await db.registerUser(userData);
+            const user = await window.db.registerUser(userData);
             this.currentUser = user;
             
             // Remove password do objeto antes de salvar
@@ -593,7 +610,7 @@ class GameAccountsApp {
                 }
             }
 
-            const account = await db.addAccount(accountData);
+            const account = await window.db.addAccount(accountData);
             this.showSuccess('Conta publicada com sucesso!');
             form.reset();
             
@@ -632,20 +649,39 @@ class GameAccountsApp {
 
     async loadFeaturedAccounts() {
         try {
-            const accounts = await db.getAllAccounts({
-                status: 'available',
-                sort: 'popular'
-            });
-
+            // Tenta carregar do LocalStorage primeiro (contas recentes)
+            let featuredAccounts = JSON.parse(localStorage.getItem('featured_accounts') || '[]');
+            
+            // Se não houver contas recentes, carrega do banco
+            if (featuredAccounts.length === 0) {
+                const accounts = await window.db.getAllAccounts({
+                    status: 'available',
+                    sort: 'popular'
+                });
+                
+                featuredAccounts = accounts.slice(0, 6);
+            }
+            
+            // Renderiza na home
             const featuredGrid = document.getElementById('featuredAccounts');
             if (featuredGrid) {
-                featuredGrid.innerHTML = accounts
-                    .slice(0, 6)
-                    .map(account => this.createAccountCard(account))
-                    .join('');
+                if (featuredAccounts.length === 0) {
+                    featuredGrid.innerHTML = `
+                        <div class="no-content">
+                            <i class="fas fa-store"></i>
+                            <p>Nenhuma conta em destaque no momento</p>
+                            <a href="listings.html" class="btn btn-primary">Ver Todas as Contas</a>
+                        </div>
+                    `;
+                } else {
+                    featuredGrid.innerHTML = featuredAccounts
+                        .map(account => this.createAccountCard(account))
+                        .join('');
+                }
             }
         } catch (error) {
             console.error('Erro ao carregar contas em destaque:', error);
+            this.showError('Erro ao carregar contas em destaque');
         }
     }
 
@@ -667,7 +703,7 @@ class GameAccountsApp {
                 filters.max_price = parseFloat(urlParams.get('max_price'));
             }
 
-            const accounts = await db.getAllAccounts(filters);
+            const accounts = await window.db.getAllAccounts(filters);
             this.displayFilteredAccounts(accounts);
         } catch (error) {
             console.error('Erro ao carregar contas:', error);
@@ -681,17 +717,17 @@ class GameAccountsApp {
         if (!accountId) return;
 
         try {
-            const account = await db.getAccount(accountId);
+            const account = await window.db.getAccount(accountId);
             if (account) {
                 this.displayAccountDetails(account);
                 
                 // Carrega reviews
-                const reviews = await db.getAccountReviews(accountId);
+                const reviews = await window.db.getAccountReviews(accountId);
                 this.displayReviews(reviews);
                 
                 // Verifica se está favoritado
                 if (this.currentUser) {
-                    const isFav = await db.isFavorite(this.currentUser.id, accountId);
+                    const isFav = await window.db.isFavorite(this.currentUser.id, accountId);
                     this.updateFavoriteButton(accountId, isFav);
                 }
             } else {
@@ -950,21 +986,21 @@ class GameAccountsApp {
 
         try {
             // Carrega dados do usuário
-            const user = await db.getUser(this.currentUser.id);
+            const user = await window.db.getUser(this.currentUser.id);
             this.displayUserDashboard(user);
 
             // Carrega contas do usuário (se vendedor)
             if (user.type === 'seller' || user.type === 'admin') {
-                const userAccounts = await db.getUserAccounts(user.id);
+                const userAccounts = await this.getUserAccounts(user.id);
                 this.displayUserAccounts(userAccounts);
             }
 
             // Carrega favoritos
-            const favorites = await db.getUserFavorites(user.id);
+            const favorites = await window.db.getUserFavorites(user.id);
             this.displayUserFavorites(favorites);
 
             // Carrega histórico de compras
-            const purchases = await db.getUserPurchases(user.id);
+            const purchases = await this.getUserPurchases(user.id);
             this.displayUserPurchases(purchases);
         } catch (error) {
             console.error('Erro ao carregar dashboard:', error);
@@ -1093,13 +1129,13 @@ class GameAccountsApp {
     }
 
     async getUserAccounts(userId) {
-        if (db.useLocalStorage) {
+        if (window.db.useLocalStorage) {
             const accounts = JSON.parse(localStorage.getItem('accounts') || '[]');
             return accounts.filter(acc => acc.seller_id === userId || acc.seller === userId);
         }
 
         return new Promise((resolve, reject) => {
-            const transaction = db.db.transaction(['accounts'], 'readonly');
+            const transaction = window.db.db.transaction(['accounts'], 'readonly');
             const store = transaction.objectStore('accounts');
             const index = store.index('seller');
             const request = index.getAll(userId);
@@ -1110,13 +1146,13 @@ class GameAccountsApp {
     }
 
     async getUserPurchases(userId) {
-        if (db.useLocalStorage) {
+        if (window.db.useLocalStorage) {
             const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
             return transactions.filter(t => t.buyer_id === userId);
         }
 
         return new Promise((resolve, reject) => {
-            const transaction = db.db.transaction(['transactions'], 'readonly');
+            const transaction = window.db.db.transaction(['transactions'], 'readonly');
             const store = transaction.objectStore('transactions');
             const index = store.index('buyer_id');
             const request = index.getAll(userId);
@@ -1178,6 +1214,24 @@ class GameAccountsApp {
         }
 
         // Implementar lista de compras
+        container.innerHTML = `
+            <div class="purchases-grid">
+                ${purchases.map(purchase => `
+                    <div class="purchase-item">
+                        <div class="purchase-header">
+                            <span class="purchase-id">#${purchase.id}</span>
+                            <span class="purchase-date">${new Date(purchase.created_at).toLocaleDateString()}</span>
+                        </div>
+                        <div class="purchase-status status-${purchase.status}">
+                            ${purchase.status === 'completed' ? 'Concluído' : 
+                              purchase.status === 'pending' ? 'Pendente' : 
+                              'Cancelado'}
+                        </div>
+                        <div class="purchase-amount">R$ ${purchase.amount?.toFixed(2) || '0,00'}</div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
     }
 
     getGameName(gameCode) {
@@ -1239,5 +1293,3 @@ const app = new GameAccountsApp();
 
 // Exporta para uso global
 window.app = app;
-window.db = db;
-window.cart = cart;
