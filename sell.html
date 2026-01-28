@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vender Conta - GameAccounts</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-gamepad"></i>
+                <h1>Game<span class="neon-text">Accounts</span></h1>
+            </div>
+            
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="index.html"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="listings.html"><i class="fas fa-store"></i> Comprar</a></li>
+                    <li><a href="sell.html" class="active"><i class="fas fa-plus-circle"></i> Vender</a></li>
+                    <li><a href="dashboard.html"><i class="fas fa-user"></i> Minha Conta</a></li>
+                    <li><a href="cart.html" class="cart-link">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </a></li>
+                </ul>
+            </nav>
+            
+            <div class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <section class="breadcrumb">
+        <div class="container">
+            <nav class="breadcrumb-nav">
+                <a href="index.html">Início</a>
+                <i class="fas fa-chevron-right"></i>
+                <a href="sell.html" class="active">Vender Conta</a>
+            </nav>
+        </div>
+    </section>
+
+    <!-- Sell Hero -->
+    <section class="sell-hero">
+        <div class="container">
+            <div class="sell-hero-content">
+                <h1 class="sell-title">Venda Sua Conta com Segurança</h1>
+                <p class="sell-subtitle">Publicar sua conta é rápido, fácil e 100% seguro</p>
+                
+                <div class="sell-steps">
+                    <div class="sell-step active">
+                        <div class="step-number">1</div>
+                        <span>Informações</span>
+                    </div>
+                    <div class="sell-step">
+                        <div class="step-number">2</div>
+                        <span>Detalhes</span>
+                    </div>
+                    <div class="sell-step">
+                        <div class="step-number">3</div>
+                        <span>Revisão</span>
+                    </div>
+                    <div class="sell-step">
+                        <div class="step-number">4</div>
+                        <span>Publicar</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sell Form Section -->
+    <section class="sell-form-section">
+        <div class="container">
+            <div class="sell-form-wrapper">
+                <form id="sell-form" class="sell-form">
+                    <div class="form-section active" id="section-game">
+                        <h2 class="form-section-title">1. Informações Básicas</h2>
+                        <p class="form-section-description">Selecione o jogo e forneça informações básicas sobre sua conta</p>
+                        
+                        <div class="form-group">
+                            <label for="game">
+                                <i class="fas fa-gamepad"></i> Jogo *
+                            </label>
+                            <select name="game" id="game" required class="form-select" data-next-section="section-details">
+                                <option value="">Selecione o jogo</option>
+                                <option value="genshin">Genshin Impact</option>
+                                <option value="lol">League of Legends</option>
+                                <option value="valorant">Valorant</option>
+                                <option value="mobile-legends">Mobile Legends</option>
+                                <option value="diablo">Diablo IV</option>
+                                <option value="fortnite">Fortnite</option>
+                                <option value="free-fire">Free Fire</option>
+                                <option value="cod">Call of Duty</option>
+                                <option value="overwatch">Overwatch 2</option>
+                                <option value="minecraft">Minecraft</option>
+                                <option value="other">Outro Jogo</option>
+                            </select>
+                            <div class="form-hint">Selecione o jogo da conta que deseja vender</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="title">
+                                <i class="fas fa-heading"></i> Título do Anúncio *
+                            </label>
+                            <input type="text" 
+                                   id="title" 
+                                   name="title" 
+                                   placeholder="Ex: Conta AR 57 End Game - 15x Personagens 5★" 
+                                   required
+                                   minlength="10"
+                                   maxlength="100">
+                            <div class="form-hint">Título atrativo que aparecerá na lista de contas (10-100 caracteres)</div>
+                            <div class="char-counter">
+                                <span id="title-counter">0</span>/100 caracteres
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="description">
+                                <i class="fas fa-align-left"></i> Descrição Detalhada *
+                            </label>
+                            <textarea id="description" 
+                                      name="description" 
+                                      placeholder="Descreva sua conta em detalhes. Inclua informações importantes, itens raros, conquistas, etc..." 
+                                      rows="5"
+                                      required
+                                      minlength="50"
+                                      maxlength="2000"></textarea>
+                            <div class="form-hint">Descreva tudo que a conta possui. Quanto mais detalhes, maior a chance de venda!</div>
+                            <div class="char-counter">
+                                <span id="description-counter">0</span>/2000 caracteres
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="price">
+                                <i class="fas fa-tag"></i> Preço (R$) *
+                            </label>
+                            <div class="price-input-wrapper">
+                                <span class="currency">R$</span>
+                                <input type="number" 
+                                       id="price" 
+                                       name="price" 
+                                       placeholder="0,00" 
+                                       step="0.01"
+                                       min="5"
+                                       max="10000"
+                                       required>
+                            </div>
+                            <div class="form-hint">Defina um preço justo para sua conta. Consulte preços similares no mercado.</div>
+                            <div class="price-suggestions">
+                                <span>Sugestões: </span>
+                                <button type="button" class="price-suggestion" data-price="49.90">R$ 49,90</button>
+                                <button type="button" class="price-suggestion" data-price="99.90">R$ 99,90</button>
+                                <button type="button" class="price-suggestion" data-price="199.90">R$ 199,90</button>
+                                <button type="button" class="price-suggestion" data-price="499.90">R$ 499,90</button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-next" data-next="section-details">
+                                Continuar <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Seção de Detalhes Específicos do Jogo -->
+                    <div class="form-section" id="section-details">
+                        <h2 class="form-section-title">2. Detalhes da Conta</h2>
+                        <p class="form-section-description">Forneça informações específicas sobre sua conta. Estas informações aparecerão nos filtros.</p>
+                        
+                        <!-- Campos dinâmicos baseados no jogo selecionado -->
+                        <div class="game-specific-fields" id="game-specific-fields">
+                            <div class="no-game-selected">
+                                <i class="fas fa-gamepad"></i>
+                                <p>Selecione um jogo para ver os campos específicos</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Informações de Servidor e Região -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="server">
+                                    <i class="fas fa-server"></i> Servidor/Região
+                                </label>
+                                <select name="server" id="server">
+                                    <option value="">Selecione o servidor</option>
+                                    <option value="br">Brasil (BR)</option>
+                                    <option value="na">América do Norte (NA)</option>
+                                    <option value="euw">Europa Oeste (EUW)</option>
+                                    <option value="eune">Europa Nordeste (EUNE)</option>
+                                    <option value="lan">América Latina (LAN)</option>
+                                    <option value="las">América Latina Sul (LAS)</option>
+                                    <option value="oce">Oceania (OCE)</option>
+                                    <option value="ru">Rússia (RU)</option>
+                                    <option value="tr">Turquia (TR)</option>
+                                    <option value="jp">Japão (JP)</option>
+                                    <option value="kr">Coreia (KR)</option>
+                                    <option value="sea">Sudeste Asiático (SEA)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="region">
+                                    <i class="fas fa-globe"></i> Região do Jogo
+                                </label>
+                                <select name="region" id="region">
+                                    <option value="">Selecione a região</option>
+                                    <option value="america">América</option>
+                                    <option value="europe">Europa</option>
+                                    <option value="asia">Ásia</option>
+                                    <option value="global">Global</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Status da Conta -->
+                        <div class="form-group">
+                            <label for="account_status">
+                                <i class="fas fa-info-circle"></i> Status da Conta
+                            </label>
+                            <select name="account_status" id="account_status">
+                                <option value="active">Ativa (Jogável)</option>
+                                <option value="fresh">Fresh (Nova)</option>
+                                <option value="banned">Banida</option>
+                                <option value="recovered">Recuperável</option>
+                            </select>
+                            <div class="form-hint">Informe o status atual da conta. Contas banidas têm menor valor.</div>
+                        </div>
+                        
+                        <!-- Data de Criação -->
+                        <div class="form-group">
+                            <label for="created_date">
+                                <i class="fas fa-calendar-alt"></i> Data de Criação
+                            </label>
+                            <input type="date" id="created_date" name="created_date">
+                            <div class="form-hint">Quando a conta foi criada? (opcional)</div>
+                        </div>
+                        
+                        <!-- Tempo de Jogo Estimado -->
+                        <div class="form-group">
+                            <label for="playtime">
+                                <i class="fas fa-clock"></i> Tempo de Jogo Estimado
+                            </label>
+                            <select name="playtime" id="playtime">
+                                <option value="">Selecione</option>
+                                <option value="less100">Menos de 100 horas</option>
+                                <option value="100-500">100-500 horas</option>
+                                <option value="500-1000">500-1000 horas</option>
+                                <option value="1000+">Mais de 1000 horas</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-prev" data-prev="section-game">
+                                <i class="fas fa-arrow-left"></i> Voltar
+                            </button>
+                            <button type="button" class="btn btn-next" data-next="section-images">
+                                Continuar <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Seção de Imagens -->
+                    <div class="form-section" id="section-images">
+                        <h2 class="form-section-title">3. Imagens da Conta</h2>
+                        <p class="form-section-description">Adicione screenshots da sua conta. Boas imagens aumentam muito as chances de venda!</p>
+                        
+                        <div class="image-upload-section">
+                            <div class="upload-area" id="upload-area">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <h3>Arraste e solte suas imagens aqui</h3>
+                                <p>ou clique para selecionar</p>
+                                <input type="file" 
+                                       id="screenshots" 
+                                       name="screenshots" 
+                                       multiple 
+                                       accept="image/*" 
+                                       style="display: none;">
+                                <button type="button" class="btn btn-upload" id="upload-btn">
+                                    <i class="fas fa-plus"></i> Selecionar Imagens
+                                </button>
+                                <p class="upload-hint">Formatos suportados: JPG, PNG, GIF. Máx. 5MB por imagem</p>
+                            </div>
+                            
+                            <div class="image-preview-container" id="image-preview">
+                                <div class="image-preview-header">
+                                    <h4>Pré-visualização (<span id="image-count">0</span> imagens)</h4>
+                                    <button type="button" class="btn-clear-all" id="clear-all-images">
+                                        <i class="fas fa-trash"></i> Limpar Todas
+                                    </button>
+                                </div>
+                                <div class="image-grid" id="image-grid">
+                                    <!-- Imagens serão adicionadas aqui -->
+                                </div>
+                                <div class="image-tips">
+                                    <h5><i class="fas fa-lightbulb"></i> Dicas para boas imagens:</h5>
+                                    <ul>
+                                        <li>Mostre personagens/items raros</li>
+                                        <li>Capture a tela de status/level</li>
+                                        <li>Mostre a coleção de itens</li>
+                                        <li>Evite imagens borradas ou escuras</li>
+                                        <li>Adicione pelo menos 3 imagens</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Informações de Contato -->
+                        <div class="contact-info-section">
+                            <h3><i class="fas fa-address-card"></i> Informações de Contato</h3>
+                            <p>Como o comprador pode entrar em contato com você?</p>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="contact_email">
+                                        <i class="fas fa-envelope"></i> Email para Contato
+                                    </label>
+                                    <input type="email" 
+                                           id="contact_email" 
+                                           name="contact_email" 
+                                           placeholder="seu@email.com"
+                                           value="">
+                                    <div class="form-hint">Usaremos o email da sua conta por padrão</div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="contact_whatsapp">
+                                        <i class="fab fa-whatsapp"></i> WhatsApp
+                                    </label>
+                                    <input type="tel" 
+                                           id="contact_whatsapp" 
+                                           name="contact_whatsapp" 
+                                           placeholder="(11) 99999-9999">
+                                    <div class="form-hint">Adicione seu WhatsApp para contato rápido</div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="contact_discord">
+                                    <i class="fab fa-discord"></i> Discord
+                                </label>
+                                <input type="text" 
+                                       id="contact_discord" 
+                                       name="contact_discord" 
+                                       placeholder="usuário#0000">
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-prev" data-prev="section-details">
+                                <i class="fas fa-arrow-left"></i> Voltar
+                            </button>
+                            <button type="button" class="btn btn-next" data-next="section-review">
+                                Continuar <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Seção de Revisão -->
+                    <div class="form-section" id="section-review">
+                        <h2 class="form-section-title">4. Revisão e Publicação</h2>
+                        <p class="form-section-description">Revise todas as informações antes de publicar sua conta</p>
+                        
+                        <div class="review-summary">
+                            <div class="review-section">
+                                <h3><i class="fas fa-gamepad"></i> Informações Básicas</h3>
+                                <div class="review-content" id="review-basic">
+                                    <!-- Preenchido via JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <div class="review-section">
+                                <h3><i class="fas fa-info-circle"></i> Detalhes da Conta</h3>
+                                <div class="review-content" id="review-details">
+                                    <!-- Preenchido via JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <div class="review-section">
+                                <h3><i class="fas fa-images"></i> Imagens</h3>
+                                <div class="review-content" id="review-images">
+                                    <!-- Preenchido via JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <div class="review-section">
+                                <h3><i class="fas fa-user"></i> Informações de Contato</h3>
+                                <div class="review-content" id="review-contact">
+                                    <!-- Preenchido via JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Termos e Condições -->
+                        <div class="terms-section">
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="terms" name="terms" required>
+                                    <label for="terms">
+                                        <i class="fas fa-check-square"></i>
+                                        Concordo com os <a href="terms.html" target="_blank">Termos de Uso</a> e 
+                                        <a href="privacy.html" target="_blank">Política de Privacidade</a>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="tos_acknowledge" name="tos_acknowledge" required>
+                                    <label for="tos_acknowledge">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        Reconheço que a venda de contas pode violar os Termos de Serviço do jogo
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="legal-warning">
+                                <h4><i class="fas fa-shield-alt"></i> Importante:</h4>
+                                <ul>
+                                    <li>Este site é apenas um intermediário</li>
+                                    <li>A transação é de responsabilidade entre comprador e vendedor</li>
+                                    <li>Verifique a legitimidade da conta antes da venda</li>
+                                    <li>Mantenha todas as informações de recuperação da conta</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-prev" data-prev="section-images">
+                                <i class="fas fa-arrow-left"></i> Voltar
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-publish">
+                                <i class="fas fa-rocket"></i> Publicar Conta
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                
+                <!-- Sidebar de Ajuda -->
+                <div class="sell-sidebar">
+                    <div class="sidebar-card">
+                        <h3><i class="fas fa-lightbulb"></i> Dicas para Vender</h3>
+                        <ul class="tips-list">
+                            <li>
+                                <i class="fas fa-camera"></i>
+                                <strong>Use boas imagens</strong>
+                                <p>Contas com mais imagens vendem 3x mais rápido</p>
+                            </li>
+                            <li>
+                                <i class="fas fa-search"></i>
+                                <strong>Pesquise preços</strong>
+                                <p>Veja contas similares para definir um preço competitivo</p>
+                            </li>
+                            <li>
+                                <i class="fas fa-star"></i>
+                                <strong>Destaque itens raros</strong>
+                                <p>Personagens, skins e itens exclusivos aumentam o valor</p>
+                            </li>
+                            <li>
+                                <i class="fas fa-clock"></i>
+                                <strong>Seja rápido nas respostas</strong>
+                                <p>Responda mensagens rapidamente para fechar negócios</p>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="sidebar-card">
+                        <h3><i class="fas fa-shield-alt"></i> Segurança</h3>
+                        <ul class="security-list">
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Nunca compartilhe sua senha antes do pagamento</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Use nosso sistema seguro de transferência</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Mantenha comprovantes de todas as transações</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Reporte qualquer comportamento suspeito</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="sidebar-card">
+                        <h3><i class="fas fa-question-circle"></i> Precisa de Ajuda?</h3>
+                        <p>Tem dúvidas sobre como vender sua conta?</p>
+                        <a href="contact.html" class="btn btn-outline">
+                            <i class="fas fa-headset"></i> Falar com Suporte
+                        </a>
+                    </div>
+                    
+                    <div class="sidebar-card stats-card">
+                        <h3><i class="fas fa-chart-line"></i> Estatísticas</h3>
+                        <div class="stats">
+                            <div class="stat-item">
+                                <span class="stat-value">85%</span>
+                                <span class="stat-label">Contas vendidas em 7 dias</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value">4.9</span>
+                                <span class="stat-label">Avaliação média dos vendedores</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value">24h</span>
+                                <span class="stat-label">Suporte disponível</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="logo">
+                        <i class="fas fa-gamepad"></i>
+                        <h2>Game<span class="neon-text">Accounts</span></h2>
+                    </div>
+                    <p class="footer-description">Marketplace seguro para compra e venda de contas de jogos.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Menu</h3>
+                    <ul>
+                        <li><a href="index.html">Início</a></li>
+                        <li><a href="listings.html">Comprar Contas</a></li>
+                        <li><a href="sell.html">Vender Conta</a></li>
+                        <li><a href="about.html">Sobre Nós</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Suporte</h3>
+                    <ul>
+                        <li><a href="contact.html">Contato</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="terms.html">Termos de Uso</a></li>
+                        <li><a href="privacy.html">Política de Privacidade</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Contato</h3>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-envelope"></i> suporte@gameaccounts.com</li>
+                        <li><i class="fab fa-whatsapp"></i> (11) 99999-9999</li>
+                        <li><i class="fas fa-map-marker-alt"></i> São Paulo, SP</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 GameAccounts. Todos os direitos reservados.</p>
+                <div class="payment-methods">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fab fa-pix"></i>
+                    <i class="fas fa-barcode"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal de Sucesso -->
+    <div class="modal success-modal" id="success-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-check-circle"></i> Conta Publicada com Sucesso!</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="success-animation">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h3>Sua conta está agora disponível no marketplace!</h3>
+                <p>Os compradores já podem visualizar sua conta e entrar em contato.</p>
+                
+                <div class="success-actions">
+                    <a href="account-detail.html?id=NEW" class="btn btn-primary">
+                        <i class="fas fa-eye"></i> Ver Minha Publicação
+                    </a>
+                    <a href="dashboard.html" class="btn btn-outline">
+                        <i class="fas fa-chart-line"></i> Ir para Dashboard
+                    </a>
+                    <a href="sell.html" class="btn btn-outline">
+                        <i class="fas fa-plus"></i> Publicar Outra Conta
+                    </a>
+                </div>
+                
+                <div class="success-tips">
+                    <h4><i class="fas fa-lightbulb"></i> Dicas para vender mais rápido:</h4>
+                    <ul>
+                        <li>Responda rapidamente às mensagens dos compradores</li>
+                        <li>Compartilhe seu anúncio nas redes sociais</li>
+                        <li>Verifique suas informações de contato regularmente</li>
+                        <li>Atualize as imagens periodicamente</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/database.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/forms.js"></script>
+    <script src="js/sell.js"></script>
+</body>
+</html>
