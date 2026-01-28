@@ -979,4 +979,5 @@ if (localStorage.getItem('accounts') === null ||
     db.initializeSampleData();
 }
 
-export default db;
+// Tornar acessível globalmente
+window.db = db;
