@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - GameAccounts</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <style>
+        .checkout-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 992px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .checkout-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .checkout-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--border-color);
+            z-index: 1;
+        }
+        
+        .checkout-step {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            flex: 1;
+        }
+        
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: 700;
+            color: var(--text-gray);
+            transition: var(--transition-normal);
+        }
+        
+        .checkout-step.active .step-circle {
+            background: var(--gradient-purple);
+            border-color: var(--primary-purple);
+            color: white;
+        }
+        
+        .checkout-step.completed .step-circle {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            color: white;
+        }
+        
+        .step-label {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+        }
+        
+        .checkout-step.active .step-label {
+            color: var(--text-light);
+            font-weight: 600;
+        }
+        
+        .checkout-form-section {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: var(--primary-purple);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-group-checkout {
+            margin-bottom: 20px;
+        }
+        
+        .form-group-checkout label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+        
+        .form-group-checkout input,
+        .form-group-checkout select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+        
+        .payment-methods {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .payment-method {
+            background: rgba(255, 255, 255, 0.02);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .payment-method:hover {
+            border-color: var(--primary-purple);
+        }
+        
+        .payment-method.selected {
+            border-color: var(--accent-green);
+            background: rgba(50, 205, 50, 0.1);
+        }
+        
+        .payment-method-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background: var(--primary-purple);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .payment-method-info {
+            flex: 1;
+        }
+        
+        .payment-method-info h4 {
+            margin-bottom: 5px;
+            color: var(--text-light);
+        }
+        
+        .payment-method-info p {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+        
+        .order-summary {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            position: sticky;
+            top: 100px;
+        }
+        
+        .summary-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--text-light);
+        }
+        
+        .summary-items {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding-right: 10px;
+        }
+        
+        .summary-item-checkout {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .summary-item-checkout:last-child {
+            border-bottom: none;
+        }
+        
+        .summary-item-title {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+        
+        .summary-item-game {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+        }
+        
+        .summary-item-price {
+            font-weight: 600;
+            color: var(--accent-green);
+        }
+        
+        .summary-total-checkout {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid var(--border-color);
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+        
+        .total-price {
+            color: var(--accent-green);
+            font-size: 1.5rem;
+        }
+        
+        .checkout-actions {
+            margin-top: 30px;
+        }
+        
+        .btn-confirm-checkout {
+            width: 100%;
+            padding: 15px;
+            background: var(--gradient-green);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-confirm-checkout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(50, 205, 50, 0.3);
+        }
+        
+        .security-note {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(50, 205, 50, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid var(--accent-green);
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+        
+        .whatsapp-redirect {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(37, 211, 102, 0.1);
+            border-radius: 10px;
+            border: 1px solid #25D366;
+        }
+        
+        .whatsapp-redirect i {
+            font-size: 2rem;
+            color: #25D366;
+            margin-bottom: 10px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .checkout-success {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .success-icon {
+            font-size: 4rem;
+            color: var(--accent-green);
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .checkout-success h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--text-light);
+        }
+        
+        .checkout-success p {
+            color: var(--text-gray);
+            margin-bottom: 30px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .success-details {
+            background: rgba(50, 205, 50, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+            text-align: left;
+        }
+        
+        .success-details h4 {
+            color: var(--accent-green);
+            margin-bottom: 15px;
+        }
+        
+        .order-id {
+            font-family: monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        
+        .whatsapp-button {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        
+        .whatsapp-button:hover {
+            background: #128C7E;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-gamepad"></i>
+                <h1>Game<span class="neon-text">Accounts</span></h1>
+            </div>
+            
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="index.html"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="listings.html"><i class="fas fa-store"></i> Comprar</a></li>
+                    <li><a href="sell.html"><i class="fas fa-plus-circle"></i> Vender</a></li>
+                    <li><a href="dashboard.html"><i class="fas fa-user"></i> Minha Conta</a></li>
+                    <li><a href="cart.html" class="cart-link">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </a></li>
+                </ul>
+            </nav>
+            
+            <div class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Checkout Content -->
+    <section class="checkout-section">
+        <div class="container">
+            <div id="checkoutForm">
+                <div class="checkout-steps">
+                    <div class="checkout-step active" id="step1">
+                        <div class="step-circle">1</div>
+                        <div class="step-label">Informações</div>
+                    </div>
+                    <div class="checkout-step" id="step2">
+                        <div class="step-circle">2</div>
+                        <div class="step-label">Pagamento</div>
+                    </div>
+                    <div class="checkout-step" id="step3">
+                        <div class="step-circle">3</div>
+                        <div class="step-label">Confirmação</div>
+                    </div>
+                </div>
+                
+                <div class="checkout-container">
+                    <!-- Formulário Principal -->
+                    <div class="checkout-main">
+                        <!-- Step 1: Informações -->
+                        <div class="checkout-form-section" id="step1-content">
+                            <h2 class="section-title"><i class="fas fa-user"></i> Informações Pessoais</h2>
+                            
+                            <div class="form-grid">
+                                <div class="form-group-checkout">
+                                    <label for="fullName">Nome Completo *</label>
+                                    <input type="text" id="fullName" name="fullName" required>
+                                </div>
+                                
+                                <div class="form-group-checkout">
+                                    <label for="email">Email *</label>
+                                    <input type="email" id="email" name="email" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group-checkout">
+                                    <label for="phone">Telefone *</label>
+                                    <input type="tel" id="phone" name="phone" required>
+                                </div>
+                                
+                                <div class="form-group-checkout">
+                                    <label for="cpf">CPF (opcional)</label>
+                                    <input type="text" id="cpf" name="cpf">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group-checkout">
+                                <label for="notes">Observações (opcional)</label>
+                                <textarea id="notes" name="notes" rows="3" placeholder="Alguma informação adicional sobre a compra..."></textarea>
+                            </div>
+                            
+                            <div class="checkout-actions">
+                                <button class="btn btn-primary" onclick="goToStep(2)">
+                                    Continuar para Pagamento <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 2: Pagamento -->
+                        <div class="checkout-form-section hidden" id="step2-content">
+                            <h2 class="section-title"><i class="fas fa-credit-card"></i> Método de Pagamento</h2>
+                            
+                            <div class="payment-methods">
+                                <div class="payment-method" onclick="selectPaymentMethod('pix')">
+                                    <div class="payment-method-icon">
+                                        <i class="fab fa-pix"></i>
+                                    </div>
+                                    <div class="payment-method-info">
+                                        <h4>PIX</h4>
+                                        <p>Pagamento instantâneo via PIX</p>
+                                    </div>
+                                    <i class="fas fa-check-circle hidden" id="pix-check"></i>
+                                </div>
+                                
+                                <div class="payment-method" onclick="selectPaymentMethod('credit')">
+                                    <div class="payment-method-icon">
+                                        <i class="far fa-credit-card"></i>
+                                    </div>
+                                    <div class="payment-method-info">
+                                        <h4>Cartão de Crédito</h4>
+                                        <p>Parcelamento em até 12x</p>
+                                    </div>
+                                    <i class="fas fa-check-circle hidden" id="credit-check"></i>
+                                </div>
+                                
+                                <div class="payment-method" onclick="selectPaymentMethod('boleto')">
+                                    <div class="payment-method-icon">
+                                        <i class="fas fa-barcode"></i>
+                                    </div>
+                                    <div class="payment-method-info">
+                                        <h4>Boleto Bancário</h4>
+                                        <p>Pagamento em 1-3 dias úteis</p>
+                                    </div>
+                                    <i class="fas fa-check-circle hidden" id="boleto-check"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Campos específicos para cada método -->
+                            <div id="pix-fields" class="hidden">
+                                <div class="security-note">
+                                    <p><i class="fas fa-info-circle"></i> Após confirmar a compra, você receberá o QR Code PIX para pagamento.</p>
+                                </div>
+                            </div>
+                            
+                            <div id="credit-fields" class="hidden">
+                                <div class="form-grid">
+                                    <div class="form-group-checkout">
+                                        <label for="cardNumber">Número do Cartão *</label>
+                                        <input type="text" id="cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456">
+                                    </div>
+                                    
+                                    <div class="form-group-checkout">
+                                        <label for="cardName">Nome no Cartão *</label>
+                                        <input type="text" id="cardName" name="cardName">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-grid">
+                                    <div class="form-group-checkout">
+                                        <label for="cardExpiry">Validade *</label>
+                                        <input type="text" id="cardExpiry" name="cardExpiry" placeholder="MM/AA">
+                                    </div>
+                                    
+                                    <div class="form-group-checkout">
+                                        <label for="cardCVC">CVC *</label>
+                                        <input type="text" id="cardCVC" name="cardCVC" placeholder="123">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group-checkout">
+                                    <label for="installments">Parcelas</label>
+                                    <select id="installments" name="installments">
+                                        <option value="1">1x de R$ <span id="total1x">0,00</span></option>
+                                        <option value="2">2x de R$ <span id="total2x">0,00</span></option>
+                                        <option value="3">3x de R$ <span id="total3x">0,00</span></option>
+                                        <option value="4">4x de R$ <span id="total4x">0,00</span></option>
+                                        <option value="5">5x de R$ <span id="total5x">0,00</span></option>
+                                        <option value="6">6x de R$ <span id="total6x">0,00</span></option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div id="boleto-fields" class="hidden">
+                                <div class="security-note">
+                                    <p><i class="fas fa-info-circle"></i> O boleto será gerado após a confirmação da compra e terá validade de 3 dias.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="checkout-actions">
+                                <button class="btn btn-outline" onclick="goToStep(1)">
+                                    <i class="fas fa-arrow-left"></i> Voltar
+                                </button>
+                                <button class="btn btn-primary" onclick="goToStep(3)">
+                                    Revisar Pedido <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 3: Confirmação -->
+                        <div class="checkout-form-section hidden" id="step3-content">
+                            <h2 class="section-title"><i class="fas fa-clipboard-check"></i> Revisão do Pedido</h2>
+                            
+                            <div class="review-section">
+                                <h3>Informações Pessoais</h3>
+                                <div class="review-info">
+                                    <p><strong>Nome:</strong> <span id="review-name">-</span></p>
+                                    <p><strong>Email:</strong> <span id="review-email">-</span></p>
+                                    <p><strong>Telefone:</strong> <span id="review-phone">-</span></p>
+                                </div>
+                            </div>
+                            
+                            <div class="review-section">
+                                <h3>Método de Pagamento</h3>
+                                <div class="review-info">
+                                    <p><strong>Método:</strong> <span id="review-payment">-</span></p>
+                                    <div id="review-payment-details"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="review-section">
+                                <h3>Itens do Pedido</h3>
+                                <div class="review-items" id="review-items">
+                                    <!-- Itens serão carregados aqui -->
+                                </div>
+                            </div>
+                            
+                            <div class="terms-check">
+                                <div class="form-group-checkout">
+                                    <div class="checkbox-group">
+                                        <input type="checkbox" id="terms-checkout" required>
+                                        <label for="terms-checkout">
+                                            Concordo com os <a href="terms.html" target="_blank">Termos de Uso</a> e confirmo que li todas as informações
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="checkout-actions">
+                                <button class="btn btn-outline" onclick="goToStep(2)">
+                                    <i class="fas fa-arrow-left"></i> Voltar
+                                </button>
+                                <button class="btn btn-primary" onclick="confirmPurchase()">
+                                    <i class="fas fa-lock"></i> Confirmar Compra
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Resumo do Pedido -->
+                    <div class="order-summary">
+                        <h3 class="summary-title">Resumo do Pedido</h3>
+                        
+                        <div class="summary-items" id="summary-items">
+                            <!-- Itens serão carregados aqui -->
+                        </div>
+                        
+                        <div class="summary-total-checkout">
+                            <span>Total:</span>
+                            <span class="total-price" id="checkout-total">R$ 0,00</span>
+                        </div>
+                        
+                        <div class="security-note">
+                            <p><i class="fas fa-shield-alt"></i> Sua compra está protegida pelo nosso sistema de segurança.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tela de Sucesso -->
+            <div id="checkoutSuccess" class="hidden">
+                <div class="checkout-success">
+                    <div class="success-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    
+                    <h2>Compra Realizada com Sucesso!</h2>
+                    <p>Sua compra foi processada com sucesso. Em instantes você receberá os detalhes da conta.</p>
+                    
+                    <div class="success-details">
+                        <h4>Detalhes do Pedido:</h4>
+                        <p><strong>Número do Pedido:</strong> <span class="order-id" id="order-id">GAC-000000</span></p>
+                        <p><strong>Data:</strong> <span id="order-date">-</span></p>
+                        <p><strong>Total:</strong> <span id="order-total">R$ 0,00</span></p>
+                        <p><strong>Método:</strong> <span id="order-method">-</span></p>
+                    </div>
+                    
+                    <div class="whatsapp-redirect" id="whatsapp-section">
+                        <i class="fab fa-whatsapp"></i>
+                        <h3>Contato via WhatsApp</h3>
+                        <p>Clique no botão abaixo para conversar com o vendedor e receber os dados da conta:</p>
+                        <a id="whatsapp-link" class="whatsapp-button" target="_blank">
+                            <i class="fab fa-whatsapp"></i> Abrir WhatsApp
+                        </a>
+                    </div>
+                    
+                    <div class="success-actions" style="margin-top: 30px;">
+                        <a href="dashboard.html" class="btn btn-primary">
+                            <i class="fas fa-user"></i> Ir para Minha Conta
+                        </a>
+                        <a href="index.html" class="btn btn-outline">
+                            <i class="fas fa-home"></i> Voltar para Início
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="logo">
+                        <i class="fas fa-gamepad"></i>
+                        <h2>Game<span class="neon-text">Accounts</span></h2>
+                    </div>
+                    <p class="footer-description">Marketplace seguro para compra e venda de contas de jogos.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Menu</h3>
+                    <ul>
+                        <li><a href="index.html">Início</a></li>
+                        <li><a href="listings.html">Comprar Contas</a></li>
+                        <li><a href="sell.html">Vender Conta</a></li>
+                        <li><a href="about.html">Sobre Nós</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Suporte</h3>
+                    <ul>
+                        <li><a href="contact.html">Contato</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="terms.html">Termos de Uso</a></li>
+                        <li><a href="privacy.html">Política de Privacidade</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Contato</h3>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-envelope"></i> suporte@gameaccounts.com</li>
+                        <li><i class="fab fa-whatsapp"></i> (11) 99999-9999</li>
+                        <li><i class="fas fa-map-marker-alt"></i> São Paulo, SP</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 GameAccounts. Todos os direitos reservados.</p>
+                <div class="payment-methods">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fab fa-pix"></i>
+                    <i class="fas fa-barcode"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/database.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/cart.js"></script>
+    
+    <script>
+        let currentStep = 1;
+        let selectedPaymentMethod = '';
+        let orderData = {};
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializa o carrinho
+            if (!window.cart) {
+                window.cart = new ShoppingCart();
+            }
+            
+            // Carrega dados do usuário se estiver logado
+            loadUserData();
+            
+            // Carrega itens do carrinho no resumo
+            loadOrderSummary();
+            
+            // Configura máscaras
+            setupInputMasks();
+            
+            // Configura eventos
+            setupCheckoutEvents();
+        });
+        
+        function loadUserData() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                document.getElementById('fullName').value = currentUser.username || '';
+                document.getElementById('email').value = currentUser.email || '';
+            }
+        }
+        
+        function loadOrderSummary() {
+            const summaryItems = document.getElementById('summary-items');
+            const checkoutTotal = document.getElementById('checkout-total');
+            
+            if (!summaryItems || !checkoutTotal) return;
+            
+            if (cart.items.length === 0) {
+                summaryItems.innerHTML = '<p style="color: var(--text-gray); text-align: center;">Carrinho vazio</p>';
+                checkoutTotal.textContent = 'R$ 0,00';
+                return;
+            }
+            
+            let total = 0;
+            summaryItems.innerHTML = cart.items.map(item => {
+                total += item.price;
+                return `
+                    <div class="summary-item-checkout">
+                        <div>
+                            <div class="summary-item-title">${item.title.substring(0, 40)}${item.title.length > 40 ? '...' : ''}</div>
+                            <div class="summary-item-game">${cart.getGameName(item.game)}</div>
+                        </div>
+                        <div class="summary-item-price">R$ ${item.price.toFixed(2)}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            checkoutTotal.textContent = `R$ ${total.toFixed(2)}`;
+            
+            // Atualiza valores das parcelas
+            updateInstallments(total);
+        }
+        
+        function updateInstallments(total) {
+            for (let i = 1; i <= 6; i++) {
+                const element = document.getElementById(`total${i}x`);
+                if (element) {
+                    const installmentValue = total / i;
+                    element.textContent = installmentValue.toFixed(2);
+                }
+            }
+        }
+        
+        function setupInputMasks() {
+            // Máscara para telefone
+            const phoneInput = document.getElementById('phone');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 11) value = value.substring(0, 11);
+                    
+                    if (value.length <= 10) {
+                        value = value.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+                    } else {
+                        value = value.replace(/^(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+                    }
+                    
+                    e.target.value = value;
+                });
+            }
+            
+            // Máscara para CPF
+            const cpfInput = document.getElementById('cpf');
+            if (cpfInput) {
+                cpfInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 11) value = value.substring(0, 11);
+                    value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{0,2})/, '$1.$2.$3-$4');
+                    e.target.value = value;
+                });
+            }
+            
+            // Máscara para número do cartão
+            const cardNumberInput = document.getElementById('cardNumber');
+            if (cardNumberInput) {
+                cardNumberInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 16) value = value.substring(0, 16);
+                    value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+                    e.target.value = value;
+                });
+            }
+            
+            // Máscara para validade do cartão
+            const cardExpiryInput = document.getElementById('cardExpiry');
+            if (cardExpiryInput) {
+                cardExpiryInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 4) value = value.substring(0, 4);
+                    value = value.replace(/^(\d{2})(\d{0,2})/, '$1/$2');
+                    e.target.value = value;
+                });
+            }
+        }
+        
+        function setupCheckoutEvents() {
+            // Validação em tempo real
+            const inputs = document.querySelectorAll('#step1-content input[required]');
+            inputs.forEach(input => {
+                input.addEventListener('blur', function() {
+                    validateField(this);
+                });
+            });
+        }
+        
+        function validateField(field) {
+            const value = field.value.trim();
+            let isValid = true;
+            let errorMessage = '';
+            
+            switch (field.id) {
+                case 'fullName':
+                    if (value.length < 3) {
+                        isValid = false;
+                        errorMessage = 'Nome deve ter pelo menos 3 caracteres';
+                    }
+                    break;
+                case 'email':
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(value)) {
+                        isValid = false;
+                        errorMessage = 'Email inválido';
+                    }
+                    break;
+                case 'phone':
+                    const phoneDigits = value.replace(/\D/g, '').length;
+                    if (phoneDigits < 10) {
+                        isValid = false;
+                        errorMessage = 'Telefone inválido';
+                    }
+                    break;
+            }
+            
+            if (!isValid) {
+                showFieldError(field, errorMessage);
+            } else {
+                clearFieldError(field);
+            }
+            
+            return isValid;
+        }
+        
+        function showFieldError(field, message) {
+            field.classList.add('error');
+            
+            // Remove mensagem de erro anterior
+            const existingError = field.parentNode.querySelector('.field-error');
+            if (existingError) {
+                existingError.remove();
+            }
+            
+            // Adiciona nova mensagem de erro
+            const errorElement = document.createElement('div');
+            errorElement.className = 'field-error';
+            errorElement.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+            field.parentNode.appendChild(errorElement);
+        }
+        
+        function clearFieldError(field) {
+            field.classList.remove('error');
+            const errorElement = field.parentNode.querySelector('.field-error');
+            if (errorElement) {
+                errorElement.remove();
+            }
+        }
+        
+        function goToStep(step) {
+            // Validação do passo atual
+            if (step > currentStep) {
+                if (!validateCurrentStep()) {
+                    return;
+                }
+            }
+            
+            // Atualiza UI dos passos
+            for (let i = 1; i <= 3; i++) {
+                const stepElement = document.getElementById(`step${i}`);
+                const contentElement = document.getElementById(`step${i}-content`);
+                
+                if (stepElement) {
+                    stepElement.classList.remove('active', 'completed');
+                    if (i < step) {
+                        stepElement.classList.add('completed');
+                    } else if (i === step) {
+                        stepElement.classList.add('active');
+                    }
+                }
+                
+                if (contentElement) {
+                    if (i === step) {
+                        contentElement.classList.remove('hidden');
+                    } else {
+                        contentElement.classList.add('hidden');
+                    }
+                }
+            }
+            
+            currentStep = step;
+            
+            // Ações específicas para cada passo
+            if (step === 2 && !selectedPaymentMethod) {
+                // Seleciona PIX por padrão
+                selectPaymentMethod('pix');
+            }
+            
+            if (step === 3) {
+                loadReviewData();
+            }
+            
+            // Scroll para o topo
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function validateCurrentStep() {
+            if (currentStep === 1) {
+                const requiredFields = document.querySelectorAll('#step1-content input[required]');
+                for (const field of requiredFields) {
+                    if (!validateField(field)) {
+                        field.focus();
+                        return false;
+                    }
+                }
+                return true;
+            }
+            
+            if (currentStep === 2) {
+                if (!selectedPaymentMethod) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Selecione um método de pagamento',
+                        confirmButtonText: 'Entendi'
+                    });
+                    return false;
+                }
+                
+                if (selectedPaymentMethod === 'credit') {
+                    const cardFields = document.querySelectorAll('#credit-fields input[required]');
+                    for (const field of cardFields) {
+                        if (!field.value.trim()) {
+                            showFieldError(field, 'Este campo é obrigatório');
+                            field.focus();
+                            return false;
+                        }
+                    }
+                }
+                
+                return true;
+            }
+            
+            return true;
+        }
+        
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+            
+            // Remove seleção anterior
+            document.querySelectorAll('.payment-method').forEach(pm => {
+                pm.classList.remove('selected');
+                const checkIcon = pm.querySelector('.fa-check-circle');
+                if (checkIcon) checkIcon.classList.add('hidden');
+            });
+            
+            // Adiciona seleção atual
+            const selectedElement = document.querySelector(`.payment-method[onclick*="${method}"]`);
+            if (selectedElement) {
+                selectedElement.classList.add('selected');
+                const checkIcon = selectedElement.querySelector('.fa-check-circle');
+                if (checkIcon) checkIcon.classList.remove('hidden');
+            }
+            
+            // Mostra campos específicos
+            document.querySelectorAll('[id$="-fields"]').forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            const fieldsElement = document.getElementById(`${method}-fields`);
+            if (fieldsElement) {
+                fieldsElement.classList.remove('hidden');
+            }
+        }
+        
+        function loadReviewData() {
+            // Informações pessoais
+            document.getElementById('review-name').textContent = document.getElementById('fullName').value;
+            document.getElementById('review-email').textContent = document.getElementById('email').value;
+            document.getElementById('review-phone').textContent = document.getElementById('phone').value;
+            
+            // Método de pagamento
+            const paymentMethods = {
+                'pix': 'PIX',
+                'credit': 'Cartão de Crédito',
+                'boleto': 'Boleto Bancário'
+            };
+            
+            document.getElementById('review-payment').textContent = paymentMethods[selectedPaymentMethod] || '-';
+            
+            // Itens do pedido
+            const reviewItems = document.getElementById('review-items');
+            if (reviewItems) {
+                reviewItems.innerHTML = cart.items.map(item => `
+                    <div style="margin-bottom: 10px; padding: 10px; background: rgba(255,255,255,0.02); border-radius: 5px;">
+                        <strong>${item.title.substring(0, 50)}${item.title.length > 50 ? '...' : ''}</strong><br>
+                        <small>${cart.getGameName(item.game)} - R$ ${item.price.toFixed(2)}</small>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        async function confirmPurchase() {
+            // Valida termos
+            const termsCheckbox = document.getElementById('terms-checkout');
+            if (!termsCheckbox || !termsCheckbox.checked) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Aceite os termos',
+                    text: 'Você precisa aceitar os Termos de Uso para continuar.',
+                    confirmButtonText: 'Entendi'
+                });
+                return;
+            }
+            
+            // Coleta dados do formulário
+            const buyerInfo = {
+                name: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                cpf: document.getElementById('cpf').value,
+                notes: document.getElementById('notes').value,
+                userId: localStorage.getItem('currentUserId'),
+                paymentMethod: selectedPaymentMethod
+            };
+            
+            // Valida dados
+            if (!buyerInfo.name || !buyerInfo.email || !buyerInfo.phone) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Dados incompletos',
+                    text: 'Preencha todas as informações obrigatórias.',
+                    confirmButtonText: 'Entendi'
+                });
+                return;
+            }
+            
+            // Mostra loading
+            Swal.fire({
+                title: 'Processando compra...',
+                text: 'Por favor, aguarde um momento.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            try {
+                // Processa o checkout
+                const result = await cart.processCheckout(selectedPaymentMethod, buyerInfo);
+                
+                if (result.success) {
+                    // Esconde formulário e mostra sucesso
+                    document.getElementById('checkoutForm').classList.add('hidden');
+                    document.getElementById('checkoutSuccess').classList.remove('hidden');
+                    
+                    // Preenche dados do pedido
+                    const orderId = 'GAC-' + Date.now().toString().substr(-6);
+                    document.getElementById('order-id').textContent = orderId;
+                    document.getElementById('order-date').textContent = new Date().toLocaleDateString('pt-BR');
+                    document.getElementById('order-total').textContent = `R$ ${result.total.toFixed(2)}`;
+                    document.getElementById('order-method').textContent = 
+                        selectedPaymentMethod === 'pix' ? 'PIX' :
+                        selectedPaymentMethod === 'credit' ? 'Cartão de Crédito' : 'Boleto';
+                    
+                    // Configura link do WhatsApp
+                    const whatsappLink = document.getElementById('whatsapp-link');
+                    if (whatsappLink) {
+                        whatsappLink.href = result.whatsappMessage;
+                    }
+                    
+                    Swal.close();
+                    
+                    // Scroll para o topo
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    
+                } else {
+                    throw new Error(result.error || 'Erro ao processar compra');
+                }
+                
+            } catch (error) {
+                console.error('Erro no checkout:', error);
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro na compra',
+                    text: error.message || 'Ocorreu um erro ao processar sua compra. Tente novamente.',
+                    confirmButtonText: 'Entendi'
+                });
+            }
+        }
+    </script>
+</body>
+</html>
