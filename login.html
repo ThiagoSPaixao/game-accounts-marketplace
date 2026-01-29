@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - GameAccounts</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <style>
+        /* Estilos específicos para cadastro */
+        .register-container {
+            min-height: calc(100vh - 200px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        
+        .register-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-card);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .register-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-green);
+        }
+        
+        .register-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .register-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+        
+        .register-logo i {
+            color: var(--accent-green);
+        }
+        
+        .register-title {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #fff, var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .register-subtitle {
+            color: var(--text-gray);
+            font-size: 0.95rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .register-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        @media (max-width: 576px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-group-register {
+            position: relative;
+        }
+        
+        .form-group-register label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+        
+        .form-group-register label i {
+            color: var(--primary-purple);
+            width: 20px;
+        }
+        
+        .form-group-register label.required::after {
+            content: ' *';
+            color: var(--accent-red);
+        }
+        
+        .input-with-icon-register {
+            position: relative;
+        }
+        
+        .input-with-icon-register i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-gray);
+            z-index: 1;
+        }
+        
+        .input-with-icon-register input,
+        .input-with-icon-register select {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: var(--transition-fast);
+        }
+        
+        .input-with-icon-register input:focus,
+        .input-with-icon-register select:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.1);
+        }
+        
+        .input-with-icon-register input.error,
+        .input-with-icon-register select.error {
+            border-color: var(--accent-red);
+        }
+        
+        .password-strength {
+            margin-top: 5px;
+        }
+        
+        .strength-meter {
+            height: 4px;
+            background: var(--border-color);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+        
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+        
+        .strength-fill.weak {
+            background: var(--accent-red);
+            width: 33%;
+        }
+        
+        .strength-fill.medium {
+            background: #FFA500;
+            width: 66%;
+        }
+        
+        .strength-fill.strong {
+            background: var(--accent-green);
+            width: 100%;
+        }
+        
+        .strength-text {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+        }
+        
+        .user-type-selector {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        
+        .user-type-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            text-align: center;
+        }
+        
+        .user-type-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary-purple);
+        }
+        
+        .user-type-btn.selected {
+            background: rgba(138, 43, 226, 0.1);
+            border-color: var(--primary-purple);
+            color: var(--primary-purple);
+        }
+        
+        .user-type-icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .user-type-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .user-type-desc {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+        }
+        
+        .terms-agreement {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 3px;
+            accent-color: var(--primary-purple);
+        }
+        
+        .checkbox-group label {
+            flex: 1;
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            line-height: 1.4;
+            cursor: pointer;
+        }
+        
+        .checkbox-group label a {
+            color: var(--neon-blue);
+            text-decoration: underline;
+        }
+        
+        .btn-register {
+            background: var(--gradient-green);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(50, 205, 50, 0.3);
+        }
+        
+        .btn-register:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .register-footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .register-footer p {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+        
+        .register-footer a {
+            color: var(--primary-purple);
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition-fast);
+        }
+        
+        .register-footer a:hover {
+            color: var(--neon-blue);
+            text-decoration: underline;
+        }
+        
+        .register-benefits {
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(50, 205, 50, 0.05);
+            border-radius: 15px;
+            border-left: 4px solid var(--accent-green);
+        }
+        
+        .register-benefits h4 {
+            color: var(--accent-green);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .benefit-item i {
+            color: var(--accent-green);
+            font-size: 1.2rem;
+            margin-top: 3px;
+        }
+        
+        .benefit-content h5 {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .benefit-content p {
+            color: var(--text-gray);
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+        
+        @media (max-width: 768px) {
+            .register-card {
+                padding: 30px 20px;
+            }
+            
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .register-title {
+                font-size: 1.8rem;
+            }
+            
+            .register-card {
+                padding: 25px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-gamepad"></i>
+                <h1>Game<span class="neon-text">Accounts</span></h1>
+            </div>
+            
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="index.html"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="listings.html"><i class="fas fa-store"></i> Comprar</a></li>
+                    <li><a href="sell.html"><i class="fas fa-plus-circle"></i> Vender</a></li>
+                    <li><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                    <li><a href="cart.html" class="cart-link">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </a></li>
+                </ul>
+            </nav>
+            
+            <div class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <section class="breadcrumb">
+        <div class="container">
+            <nav class="breadcrumb-nav">
+                <a href="index.html">Início</a>
+                <i class="fas fa-chevron-right"></i>
+                <a href="register.html" class="active">Cadastro</a>
+            </nav>
+        </div>
+    </section>
+
+    <!-- Register Content -->
+    <section class="register-container">
+        <div class="container">
+            <div class="register-card">
+                <div class="register-header">
+                    <div class="register-logo">
+                        <i class="fas fa-user-plus"></i>
+                        <span>GameAccounts</span>
+                    </div>
+                    <h1 class="register-title">Crie sua conta</h1>
+                    <p class="register-subtitle">Junte-se à maior comunidade de gamers e comece a comprar ou vender contas hoje mesmo</p>
+                </div>
+                
+                <form id="registerForm" class="register-form">
+                    <div class="form-row">
+                        <div class="form-group-register">
+                            <label for="username" class="required">
+                                <i class="fas fa-user"></i> Nome de Usuário
+                            </label>
+                            <div class="input-with-icon-register">
+                                <i class="fas fa-user"></i>
+                                <input type="text" 
+                                       id="username" 
+                                       name="username" 
+                                       placeholder="seu_nome_de_usuario" 
+                                       required
+                                       minlength="3"
+                                       maxlength="20"
+                                       autocomplete="username">
+                            </div>
+                            <div class="field-error" id="username-error"></div>
+                        </div>
+                        
+                        <div class="form-group-register">
+                            <label for="email" class="required">
+                                <i class="fas fa-envelope"></i> Email
+                            </label>
+                            <div class="input-with-icon-register">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" 
+                                       id="email" 
+                                       name="email" 
+                                       placeholder="seu@email.com" 
+                                       required
+                                       autocomplete="email">
+                            </div>
+                            <div class="field-error" id="email-error"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group-register">
+                            <label for="password" class="required">
+                                <i class="fas fa-lock"></i> Senha
+                            </label>
+                            <div class="input-with-icon-register">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" 
+                                       id="password" 
+                                       name="password" 
+                                       placeholder="Crie uma senha forte" 
+                                       required
+                                       minlength="6"
+                                       autocomplete="new-password">
+                                <button type="button" class="password-toggle" id="togglePassword">
+                                    <i class="far fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="password-strength">
+                                <div class="strength-meter">
+                                    <div class="strength-fill" id="password-strength"></div>
+                                </div>
+                                <div class="strength-text" id="password-strength-text">Força da senha</div>
+                            </div>
+                            <div class="field-error" id="password-error"></div>
+                        </div>
+                        
+                        <div class="form-group-register">
+                            <label for="confirm_password" class="required">
+                                <i class="fas fa-lock"></i> Confirmar Senha
+                            </label>
+                            <div class="input-with-icon-register">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" 
+                                       id="confirm_password" 
+                                       name="confirm_password" 
+                                       placeholder="Digite a senha novamente" 
+                                       required
+                                       autocomplete="new-password">
+                                <button type="button" class="password-toggle" id="toggleConfirmPassword">
+                                    <i class="far fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="field-error" id="confirm-password-error"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group-register">
+                            <label for="phone">
+                                <i class="fas fa-phone"></i> Telefone
+                            </label>
+                            <div class="input-with-icon-register">
+                                <i class="fas fa-phone"></i>
