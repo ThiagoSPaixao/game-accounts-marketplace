@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho - GameAccounts</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <style>
+        /* Estilos específicos para o carrinho */
+        .cart-empty {
+            text-align: center;
+            padding: 80px 20px;
+        }
+        
+        .cart-empty i {
+            font-size: 4rem;
+            color: var(--text-gray);
+            margin-bottom: 20px;
+        }
+        
+        .cart-empty h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--text-light);
+        }
+        
+        .cart-empty p {
+            color: var(--text-gray);
+            margin-bottom: 30px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cart-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 992px) {
+            .cart-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .cart-items-section {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .cart-header h2 {
+            font-size: 1.8rem;
+            color: var(--text-light);
+        }
+        
+        .btn-clear-cart {
+            background: none;
+            border: 1px solid var(--accent-red);
+            color: var(--accent-red);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-clear-cart:hover {
+            background: rgba(255, 71, 87, 0.1);
+        }
+        
+        .cart-item {
+            display: grid;
+            grid-template-columns: 120px 1fr auto;
+            gap: 20px;
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            transition: var(--transition-fast);
+        }
+        
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        
+        .cart-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .cart-item-image {
+            width: 120px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .cart-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .cart-item-details {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .cart-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .cart-item-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+        
+        .cart-item-game {
+            margin-bottom: 10px;
+        }
+        
+        .cart-item-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .feature-tag {
+            background: rgba(138, 43, 226, 0.1);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--text-gray);
+        }
+        
+        .cart-item-seller {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--text-gray);
+        }
+        
+        .cart-item-price {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        
+        .price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+        
+        .btn-remove-item {
+            background: none;
+            border: none;
+            color: var(--accent-red);
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px;
+            border-radius: 4px;
+            transition: var(--transition-fast);
+        }
+        
+        .btn-remove-item:hover {
+            background: rgba(255, 71, 87, 0.1);
+        }
+        
+        .btn-move-favorites {
+            background: rgba(138, 43, 226, 0.1);
+            border: 1px solid var(--primary-purple);
+            color: var(--primary-purple);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .btn-move-favorites:hover {
+            background: rgba(138, 43, 226, 0.2);
+        }
+        
+        .cart-summary {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+        
+        .cart-summary h2 {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: var(--text-light);
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .summary-item:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-light);
+        }
+        
+        .summary-label {
+            color: var(--text-gray);
+        }
+        
+        .summary-value {
+            color: var(--text-light);
+            font-weight: 600;
+        }
+        
+        .summary-total .summary-value {
+            color: var(--accent-green);
+            font-size: 1.5rem;
+        }
+        
+        .checkout-actions {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .btn-checkout {
+            width: 100%;
+            padding: 15px;
+            background: var(--gradient-green);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-checkout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(50, 205, 50, 0.3);
+        }
+        
+        .btn-continue-shopping {
+            width: 100%;
+            padding: 12px;
+            background: none;
+            border: 2px solid var(--primary-purple);
+            color: var(--primary-purple);
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            text-align: center;
+        }
+        
+        .btn-continue-shopping:hover {
+            background: rgba(138, 43, 226, 0.1);
+        }
+        
+        .cart-security {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .security-badges {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-top: 15px;
+        }
+        
+        .security-badge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-gray);
+            font-size: 0.8rem;
+        }
+        
+        .security-badge i {
+            font-size: 1.5rem;
+            color: var(--accent-green);
+        }
+        
+        .cart-recommendations {
+            margin-top: 50px;
+        }
+        
+        .recommendations-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--text-light);
+        }
+        
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .cart-item {
+                grid-template-columns: 1fr;
+            }
+            
+            .cart-item-image {
+                width: 100%;
+                height: 150px;
+            }
+            
+            .cart-item-price {
+                text-align: left;
+                align-items: flex-start;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            
+            .security-badges {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-gamepad"></i>
+                <h1>Game<span class="neon-text">Accounts</span></h1>
+            </div>
+            
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="index.html"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="listings.html"><i class="fas fa-store"></i> Comprar</a></li>
+                    <li><a href="sell.html"><i class="fas fa-plus-circle"></i> Vender</a></li>
+                    <li><a href="dashboard.html"><i class="fas fa-user"></i> Minha Conta</a></li>
+                    <li><a href="cart.html" class="active cart-link">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </a></li>
+                </ul>
+            </nav>
+            
+            <div class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <section class="breadcrumb">
+        <div class="container">
+            <nav class="breadcrumb-nav">
+                <a href="index.html">Início</a>
+                <i class="fas fa-chevron-right"></i>
+                <a href="cart.html" class="active">Carrinho</a>
+            </nav>
+        </div>
+    </section>
+
+    <!-- Cart Content -->
+    <section class="cart-section">
+        <div class="container">
+            <div id="cartWithItems" class="hidden">
+                <div class="cart-header">
+                    <h2><i class="fas fa-shopping-cart"></i> Meu Carrinho</h2>
+                    <button class="btn-clear-cart" id="clearCart">
+                        <i class="fas fa-trash"></i> Limpar Carrinho
+                    </button>
+                </div>
+                
+                <div class="cart-container">
+                    <!-- Items List -->
+                    <div class="cart-items-section">
+                        <div class="cart-items" id="cartItems">
+                            <!-- Items serão carregados via JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <!-- Order Summary -->
+                    <div class="cart-summary">
+                        <h2><i class="fas fa-receipt"></i> Resumo do Pedido</h2>
+                        
+                        <div class="summary-item">
+                            <span class="summary-label">Subtotal</span>
+                            <span class="summary-value" id="subtotal">R$ 0,00</span>
+                        </div>
+                        
+                        <div class="summary-item">
+                            <span class="summary-label">Taxa de Serviço</span>
+                            <span class="summary-value">R$ 0,00</span>
+                        </div>
+                        
+                        <div class="summary-item">
+                            <span class="summary-label">Proteção da Conta</span>
+                            <span class="summary-value">Grátis</span>
+                        </div>
+                        
+                        <div class="summary-item summary-total">
+                            <span class="summary-label">Total</span>
+                            <span class="summary-value" id="cartTotal">R$ 0,00</span>
+                        </div>
+                        
+                        <div class="checkout-actions">
+                            <button class="btn-checkout" id="checkoutBtn">
+                                <i class="fas fa-lock"></i> Finalizar Compra
+                            </button>
+                            <a href="listings.html" class="btn-continue-shopping">
+                                <i class="fas fa-arrow-left"></i> Continuar Comprando
+                            </a>
+                        </div>
+                        
+                        <div class="cart-security">
+                            <p style="text-align: center; color: var(--text-gray); margin-bottom: 15px;">
+                                <i class="fas fa-shield-alt"></i> Compra 100% Segura
+                            </p>
+                            <div class="security-badges">
+                                <div class="security-badge">
+                                    <i class="fas fa-lock"></i>
+                                    <span>SSL</span>
+                                </div>
+                                <div class="security-badge">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span>Garantia</span>
+                                </div>
+                                <div class="security-badge">
+                                    <i class="fas fa-handshake"></i>
+                                    <span>Suporte</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recommendations -->
+                <div class="cart-recommendations">
+                    <h3 class="recommendations-title">Você também pode gostar</h3>
+                    <div class="recommendations-grid" id="recommendationsGrid">
+                        <!-- Recomendações serão carregadas via JavaScript -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Empty Cart -->
+            <div id="emptyCart">
+                <div class="cart-empty">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h2>Seu carrinho está vazio</h2>
+                    <p>Adicione contas de jogos ao seu carrinho para continuar com a compra.</p>
+                    <div class="empty-cart-actions">
+                        <a href="listings.html" class="btn btn-primary">
+                            <i class="fas fa-store"></i> Explorar Contas
+                        </a>
+                        <a href="index.html" class="btn btn-outline">
+                            <i class="fas fa-home"></i> Voltar para Início
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Popular Games -->
+                <div class="popular-games-section">
+                    <h3 style="text-align: center; margin-bottom: 30px; font-size: 1.5rem;">
+                        Jogos Mais Populares
+                    </h3>
+                    <div class="games-grid">
+                        <div class="game-card" data-game="genshin">
+                            <div class="game-icon">
+                                <i class="fas fa-wind"></i>
+                            </div>
+                            <h3>Genshin Impact</h3>
+                            <p class="account-count">150 contas</p>
+                            <a href="listings.html?game=genshin" class="game-link">Ver Contas <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                        
+                        <div class="game-card" data-game="lol">
+                            <div class="game-icon">
+                                <i class="fas fa-fist-raised"></i>
+                            </div>
+                            <h3>League of Legends</h3>
+                            <p class="account-count">320 contas</p>
+                            <a href="listings.html?game=lol" class="game-link">Ver Contas <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                        
+                        <div class="game-card" data-game="valorant">
+                            <div class="game-icon">
+                                <i class="fas fa-crosshairs"></i>
+                            </div>
+                            <h3>Valorant</h3>
+                            <p class="account-count">180 contas</p>
+                            <a href="listings.html?game=valorant" class="game-link">Ver Contas <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="logo">
+                        <i class="fas fa-gamepad"></i>
+                        <h2>Game<span class="neon-text">Accounts</span></h2>
+                    </div>
+                    <p class="footer-description">Marketplace seguro para compra e venda de contas de jogos.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Menu</h3>
+                    <ul>
+                        <li><a href="index.html">Início</a></li>
+                        <li><a href="listings.html">Comprar Contas</a></li>
+                        <li><a href="sell.html">Vender Conta</a></li>
+                        <li><a href="about.html">Sobre Nós</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Suporte</h3>
+                    <ul>
+                        <li><a href="contact.html">Contato</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="terms.html">Termos de Uso</a></li>
+                        <li><a href="privacy.html">Política de Privacidade</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Contato</h3>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-envelope"></i> suporte@gameaccounts.com</li>
+                        <li><i class="fab fa-whatsapp"></i> (11) 99999-9999</li>
+                        <li><i class="fas fa-map-marker-alt"></i> São Paulo, SP</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 GameAccounts. Todos os direitos reservados.</p>
+                <div class="payment-methods">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fab fa-pix"></i>
+                    <i class="fas fa-barcode"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/database.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/cart.js"></script>
+    
+    <script>
+        // Inicialização quando o DOM estiver pronto
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializa o carrinho se ainda não foi inicializado
+            if (!window.cart) {
+                window.cart = new ShoppingCart();
+            }
+            
+            // Renderiza os itens do carrinho
+            cart.renderCartItems();
+            
+            // Carrega recomendações
+            loadRecommendations();
+            
+            // Configura eventos
+            setupCartEvents();
+        });
+        
+        function loadRecommendations() {
+            // Busca contas recomendadas baseadas no carrinho ou populares
+            db.getAllAccounts({
+                status: 'available',
+                limit: 4
+            }).then(accounts => {
+                const recommendationsGrid = document.getElementById('recommendationsGrid');
+                if (recommendationsGrid && accounts.length > 0) {
+                    recommendationsGrid.innerHTML = accounts.slice(0, 4).map(account => `
+                        <div class="account-card">
+                            <div class="account-card-header">
+                                <span class="game-badge">${app.getGameName(account.game)}</span>
+                            </div>
+                            
+                            <div class="account-image">
+                                <img src="images/${account.images?.[0] || 'default-account.jpg'}" alt="${account.title}">
+                            </div>
+                            
+                            <div class="account-info">
+                                <h3 class="account-title">${account.title.substring(0, 50)}${account.title.length > 50 ? '...' : ''}</h3>
+                                
+                                <div class="account-features">
+                                    ${app.renderAccountFeatures(account)}
+                                </div>
+                                
+                                <div class="account-footer">
+                                    <div class="price">R$ ${account.price.toFixed(2)}</div>
+                                    <div class="action-buttons">
+                                        <button class="btn-add-to-cart" data-account-id="${account.id}">
+                                            <i class="fas fa-cart-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }).catch(error => {
+                console.error('Erro ao carregar recomendações:', error);
+            });
+        }
+        
+        function setupCartEvents() {
+            // Evento para limpar carrinho
+            const clearCartBtn = document.getElementById('clearCart');
+            if (clearCartBtn) {
+                clearCartBtn.addEventListener('click', () => {
+                    Swal.fire({
+                        title: 'Limpar carrinho?',
+                        text: 'Tem certeza que deseja remover todos os itens do carrinho?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sim, limpar!',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            cart.clearCart();
+                        }
+                    });
+                });
+            }
+            
+            // Evento para checkout
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            if (checkoutBtn) {
+                checkoutBtn.addEventListener('click', () => {
+                    cart.startCheckout();
+                });
+            }
+            
+            // Event listener para atualização do carrinho
+            window.addEventListener('cartUpdated', (event) => {
+                const { itemCount, total } = event.detail;
+                
+                // Atualiza totais
+                const subtotal = document.getElementById('subtotal');
+                const cartTotal = document.getElementById('cartTotal');
+                
+                if (subtotal) subtotal.textContent = `R$ ${total.toFixed(2)}`;
+                if (cartTotal) cartTotal.textContent = `R$ ${total.toFixed(2)}`;
+                
+                // Mostra/oculta seções
+                const emptyCart = document.getElementById('emptyCart');
+                const cartWithItems = document.getElementById('cartWithItems');
+                
+                if (itemCount === 0) {
+                    emptyCart.classList.remove('hidden');
+                    cartWithItems.classList.add('hidden');
+                } else {
+                    emptyCart.classList.add('hidden');
+                    cartWithItems.classList.remove('hidden');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
